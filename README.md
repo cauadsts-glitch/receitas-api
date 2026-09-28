@@ -12,8 +12,8 @@ Projeto da APS da disciplina de Desenvolvimento Back-end — Engenharia de Softw
 
 ## 2. Integrantes da equipe
 
-- Mateus R. Pereira
-- _(adicione o nome completo dos demais integrantes)_
+- Cauã Oliveira dos Santos
+
 
 ## 3. Tecnologias utilizadas
 
@@ -55,12 +55,23 @@ database/
 ```
 
 ## 6. Configuração e execução
+1. Clone o repositório e entre na pasta:
+```bash
+git clone https://github.com/cauadsts-glitch/receitas-api.git
+cd receitas-api
+```
+2. Instale as dependências:
+```bash
+npm install
+```
+3. Crie as tabelas no banco: abra o SQL Editor do Supabase e execute o script `database/schema.sql`.
+4. Configure as variáveis de ambiente: copie o arquivo de exemplo e preencha com os dados 
+```bash
+cp .env
+```
+5. Inicie a aplicação em modo de desenvolvimento:
 
 ```bash
-git clone <url-do-repositorio>
-cd receitas-api
-npm install
-cp .env.example .env    # preencha com os dados do seu projeto Supabase
 npm run dev
 ```
 
@@ -73,7 +84,7 @@ O servidor inicia em `http://localhost:3000`.
 | `SUPABASE_URL` | URL do projeto no Supabase |
 | `SUPABASE_SECRET_KEY` | Chave secreta do Supabase |
 
-O arquivo `.env` está no `.gitignore` e não deve ser enviado ao Git. Use o `.env.example` como modelo.
+O arquivo `.env` está no `.gitignore` e não deve ser enviado ao Git.
 
 ## 8. Banco de dados
 
