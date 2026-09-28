@@ -14,7 +14,7 @@ Projeto da APS da disciplina de Desenvolvimento Back-end — Engenharia de Softw
 
 - Cauã Oliveira dos Santos
 - João Lucas
-- Gustavo
+- Gustavo Henrique Silva Poyer
 
 
 ## 3. Tecnologias utilizadas
