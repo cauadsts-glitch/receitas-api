@@ -13,7 +13,7 @@ Projeto da APS da disciplina de Desenvolvimento Back-end — Engenharia de Softw
 ## 2. Integrantes da equipe
 
 - Cauã Oliveira dos Santos
-- João Lucas
+- João Lucas Pires de Oliveira
 - Gustavo Henrique Silva Poyer
 
 
