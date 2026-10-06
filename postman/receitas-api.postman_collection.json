@@ -221,51 +221,6 @@
       "name": "2 - Receitas",
       "item": [
         {
-          "name": "PREPARAÇÃO - POST /categories (categoria de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"categoryId\", body.id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Sobremesas\",\n  \"description\": \"Doces, bolos e tortas\",\n  \"icon\": \"cake\",\n  \"display_order\": 1,\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "POST /receitas - Criar",
           "event": [
             {
@@ -468,86 +423,12 @@
             }
           },
           "response": []
-        },
-        {
-          "name": "LIMPEZA - DELETE /categories/:id (categoria de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories/{{categoryId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories",
-                "{{categoryId}}"
-              ]
-            }
-          },
-          "response": []
         }
       ]
     },
     {
       "name": "3 - Reviews",
       "item": [
-        {
-          "name": "PREPARAÇÃO - POST /receitas (receita de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"receitaId\", body.id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"category_id\": \"{{categoryId}}\",\n  \"title\": \"Bolo de cenoura\",\n  \"description\": \"Bolo fofinho com cobertura de chocolate\",\n  \"ingredients\": \"3 cenouras, 4 ovos, 1 xícara de óleo, 2 xícaras de açúcar, 2 xícaras de farinha, 1 colher de fermento\",\n  \"instructions\": \"Bata no liquidificador as cenouras, os ovos e o óleo. Misture com o açúcar e a farinha, adicione o fermento e asse por 40 minutos a 180 °C.\",\n  \"prep_time_minutes\": 60,\n  \"servings\": 10,\n  \"difficulty\": \"easy\",\n  \"image\": \"https://exemplo.com/bolo-de-cenoura.jpg\",\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/receitas",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "receitas"
-              ]
-            }
-          },
-          "response": []
-        },
         {
           "name": "POST /reviews - Criar",
           "event": [
@@ -777,35 +658,6 @@
               "path": [
                 "reviews",
                 "{{reviewId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "LIMPEZA - DELETE /receitas/:id (receita de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/receitas/{{receitaId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "receitas",
-                "{{receitaId}}"
               ]
             }
           },
