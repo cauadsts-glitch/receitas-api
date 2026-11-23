@@ -59,3 +59,12 @@ create unique index if not exists receitas_title_per_category_unique
 -- Índices para as consultas por chave estrangeira
 create index if not exists receitas_category_id_idx on receitas (category_id);
 create index if not exists reviews_receita_id_idx on reviews (receita_id);
+
+grant usage on schema public to service_role;
+grant all on all tables in schema public to service_role;
+grant all on all sequences in schema public to service_role;
+
+alter default privileges in schema public
+  grant all on tables to service_role;
+alter default privileges in schema public
+  grant all on sequences to service_role;
