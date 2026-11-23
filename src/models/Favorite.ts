@@ -1,79 +1,53 @@
-import supabase from "../config/supabase.js";
+import {
+  asObject,
+  optionalString,
+  requiredUuid,
+} from "../utils/validation.js";
+import type { ReceitaRecord } from "./Receita.js";
 
-async function findAll() {
-  const { data, error } = await supabase
-    .from("favorites")
-    .select("*, receitas(*)");
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+/** Registro como está salvo na tabela `favorites` (com a receita associada). */
+export interface FavoriteRecord {
+  id: string;
+  receita_id: string;
+  note: string | null;
+  created_at: string;
+  receitas?: ReceitaRecord | null;
 }
 
-async function findById(id: string) {
-  const { data, error } = await supabase
-    .from("favorites")
-    .select("*, receitas(*)")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+/** Dados graváveis de um favorito. */
+export interface FavoriteData {
+  receita_id: string;
+  note: string | null;
 }
 
-async function create(favorite: { receita_id: string; note: string }) {
-  const { data, error } = await supabase
-    .from("favorites")
-    .insert(favorite)
-    .select()
-    .single();
+export class Favorite {
+  private readonly data: FavoriteData;
 
-  if (error) {
-    throw error;
+  private constructor(data: FavoriteData) {
+    this.data = data;
   }
 
-  return data;
-}
+  static fromInput(body: unknown): Favorite {
+    const input = asObject(body);
 
-async function update(id: string, favorite: { note: string }) {
-  const { data, error } = await supabase
-    .from("favorites")
-    .update(favorite)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
+    return new Favorite({
+      receita_id: requiredUuid(input, "receita_id", "O ID da receita"),
+      note: optionalString(input, "note", "A anotação", 500),
+    });
   }
 
-  return data;
-}
+  /** Na atualização de um favorito somente a anotação pode mudar. */
+  static parseNoteUpdate(body: unknown): string | null {
+    const input = asObject(body);
 
-async function remove(id: string) {
-  const { data, error } = await supabase
-    .from("favorites")
-    .delete()
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
+    return optionalString(input, "note", "A anotação", 500);
   }
 
-  return data;
-}
+  get receitaId(): string {
+    return this.data.receita_id;
+  }
 
-export default {
-  findAll,
-  findById,
-  create,
-  update,
-  remove,
-};
+  toPersistence(): FavoriteData {
+    return { ...this.data };
+  }
+}

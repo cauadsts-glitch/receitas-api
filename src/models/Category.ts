@@ -1,106 +1,74 @@
-import supabase from "../config/supabase.js";
+import {
+  asObject,
+  optionalBoolean,
+  optionalNonNegativeInt,
+  optionalString,
+  requiredString,
+} from "../utils/validation.js";
 
-async function findAll() {
-  const { data, error } = await supabase.from("categories").select("*");
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
-
-async function findById(id: string) {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
-
-async function create(category: {
+/** Registro como está salvo na tabela `categories`. */
+export interface CategoryRecord {
+  id: string;
   name: string;
-  description: string;
-  icon: string;
+  description: string | null;
+  icon: string | null;
   display_order: number;
   active: boolean;
-}) {
-  const { data, error } = await supabase
-    .from("categories")
-    .insert(category)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+  created_at: string;
 }
 
-async function update(
-  id: string,
-  category: {
-    name: string;
-    description: string;
-    icon: string;
-    display_order: number;
-    active: boolean;
-  },
-) {
-  const { data, error } = await supabase
-    .from("categories")
-    .update(category)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+/** Dados graváveis de uma categoria. */
+export interface CategoryData {
+  name: string;
+  description: string | null;
+  icon: string | null;
+  display_order: number;
+  active: boolean;
 }
 
-async function remove(id: string) {
-  const { data, error } = await supabase
-    .from("categories")
-    .delete()
-    .eq("id", id)
-    .select()
-    .single();
+/**
+ * Modelo de domínio de Categoria.
+ * Garante (encapsulamento) que só existam instâncias com dados válidos.
+ */
+export class Category {
+  private readonly data: CategoryData;
 
-  if (error) {
-    throw error;
+  private constructor(data: CategoryData) {
+    this.data = data;
   }
 
-  return data;
-}
+  /** Cria uma categoria validando o corpo da requisição. */
+  static fromInput(body: unknown): Category {
+    const input = asObject(body);
 
-async function findByKeyword(keyword: string) {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*")
-    .or(`name.ilike.%${keyword}%, description.ilike.%${keyword}%`);
-
-  if (error) {
-    throw error;
+    return new Category({
+      name: requiredString(input, "name", "O nome da categoria", 100),
+      description: optionalString(input, "description", "A descrição"),
+      icon: optionalString(input, "icon", "O ícone", 100),
+      display_order: optionalNonNegativeInt(
+        input,
+        "display_order",
+        "A ordem de exibição",
+        0,
+      ),
+      active: optionalBoolean(input, "active", "O campo active", true),
+    });
   }
 
-  return data;
-}
+  /** Uma categoria só aceita novas receitas ativas enquanto estiver ativa. */
+  static isAvailable(record: Pick<CategoryRecord, "active">): boolean {
+    return record.active;
+  }
 
-export default {
-  findAll,
-  findById,
-  create,
-  update,
-  remove,
-  findByKeyword,
-};
+  get name(): string {
+    return this.data.name;
+  }
+
+  get active(): boolean {
+    return this.data.active;
+  }
+
+  toPersistence(): CategoryData {
+    return { ...this.data };
+  }
+}

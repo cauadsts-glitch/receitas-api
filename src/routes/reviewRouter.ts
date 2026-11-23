@@ -1,14 +1,16 @@
 import { Router } from "express";
-import ReviewController from "../controllers/ReviewController.js";
+import type { ReviewController } from "../controllers/ReviewController.js";
 
-const router = Router();
+export function reviewRouter(controller: ReviewController): Router {
+  const router = Router();
 
-router.get("/", ReviewController.getAll);
-router.get("/search/:keyword", ReviewController.getByKeyword);
-router.get("/receita/:receitaId", ReviewController.getByReceita);
-router.get("/:id", ReviewController.getById);
-router.post("/", ReviewController.create);
-router.put("/:id", ReviewController.update);
-router.delete("/:id", ReviewController.remove);
+  router.get("/", controller.getAll);
+  router.get("/search/:keyword", controller.getByKeyword);
+  router.get("/receita/:receitaId", controller.getByReceita);
+  router.get("/:id", controller.getById);
+  router.post("/", controller.create);
+  router.put("/:id", controller.update);
+  router.delete("/:id", controller.remove);
 
-export default router;
+  return router;
+}

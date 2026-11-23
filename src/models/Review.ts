@@ -1,118 +1,61 @@
-import supabase from "../config/supabase.js";
+import {
+  asObject,
+  optionalString,
+  requiredIntInRange,
+  requiredString,
+  requiredUuid,
+} from "../utils/validation.js";
 
-async function findAll() {
-  const { data, error } = await supabase.from("reviews").select("*");
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
-
-async function findById(id: string) {
-  const { data, error } = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
-
-async function findByReceita(receitaId: string) {
-  const { data, error } = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("receita_id", receitaId);
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
-
-async function create(review: {
+/** Registro como está salvo na tabela `reviews`. */
+export interface ReviewRecord {
+  id: string;
   receita_id: string;
   author_name: string;
   rating: number;
-  comment: string;
-}) {
-  const { data, error } = await supabase
-    .from("reviews")
-    .insert(review)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+  comment: string | null;
+  created_at: string;
 }
 
-async function update(
-  id: string,
-  review: {
-    receita_id: string;
-    author_name: string;
-    rating: number;
-    comment: string;
-  },
-) {
-  const { data, error } = await supabase
-    .from("reviews")
-    .update(review)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+/** Dados graváveis de uma avaliação. */
+export interface ReviewData {
+  receita_id: string;
+  author_name: string;
+  rating: number;
+  comment: string | null;
 }
 
-async function remove(id: string) {
-  const { data, error } = await supabase
-    .from("reviews")
-    .delete()
-    .eq("id", id)
-    .select()
-    .single();
+export class Review {
+  private readonly data: ReviewData;
 
-  if (error) {
-    throw error;
+  private constructor(data: ReviewData) {
+    this.data = data;
   }
 
-  return data;
-}
+  static fromInput(body: unknown): Review {
+    const input = asObject(body);
 
-async function findByKeyword(keyword: string) {
-  const { data, error } = await supabase
-    .from("reviews")
-    .select("*")
-    .or(`author_name.ilike.%${keyword}%, comment.ilike.%${keyword}%`);
-
-  if (error) {
-    throw error;
+    return new Review({
+      receita_id: requiredUuid(input, "receita_id", "O ID da receita"),
+      author_name: requiredString(
+        input,
+        "author_name",
+        "O nome do autor",
+        100,
+      ),
+      rating: requiredIntInRange(input, "rating", "A nota", 1, 5),
+      comment: optionalString(input, "comment", "O comentário"),
+    });
   }
 
-  return data;
-}
+  get receitaId(): string {
+    return this.data.receita_id;
+  }
 
-export default {
-  findAll,
-  findById,
-  findByReceita,
-  create,
-  update,
-  remove,
-  findByKeyword,
-};
+  get rating(): number {
+    return this.data.rating;
+  }
+
+  toPersistence(): ReviewData {
+    return { ...this.data };
+  }
+}

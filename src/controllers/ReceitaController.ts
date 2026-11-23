@@ -1,165 +1,34 @@
 import type { Request, Response } from "express";
-import Receita from "../models/Receita.js";
+import type { ReceitaService } from "../services/ReceitaService.js";
 
-function validateReceita(body: any): string | null {
-  if (!body?.category_id || typeof body.category_id !== "string") {
-    return "O ID da categoria é obrigatório.";
-  }
+export class ReceitaController {
+  constructor(private readonly service: ReceitaService) {}
 
-  if (!body.title || typeof body.title !== "string") {
-    return "O título da receita é obrigatório.";
-  }
+  getAll = async (_req: Request, res: Response): Promise<void> => {
+    res.status(200).json(await this.service.getAll());
+  };
 
-  if (!body.ingredients || typeof body.ingredients !== "string") {
-    return "Os ingredientes são obrigatórios.";
-  }
+  getByKeyword = async (
+    req: Request<{ keyword: string }>,
+    res: Response,
+  ): Promise<void> => {
+    res.status(200).json(await this.service.search(req.params.keyword));
+  };
 
-  if (!body.instructions || typeof body.instructions !== "string") {
-    return "O modo de preparo é obrigatório.";
-  }
+  getById = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    res.status(200).json(await this.service.getById(req.params.id));
+  };
 
-  return null;
+  create = async (req: Request, res: Response): Promise<void> => {
+    res.status(201).json(await this.service.create(req.body));
+  };
+
+  update = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    res.status(200).json(await this.service.update(req.params.id, req.body));
+  };
+
+  remove = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    await this.service.remove(req.params.id);
+    res.status(200).json({ message: "Receita removida com sucesso!" });
+  };
 }
-
-async function getAll(req: Request, res: Response) {
-  try {
-    const receitas = await Receita.findAll();
-
-    res.status(200).json(receitas);
-  } catch (error) {
-    console.log("Erro ao buscar receitas: ", error);
-
-    res.status(404).json({
-      message: "Erro ao buscar receitas.",
-    });
-  }
-}
-
-async function getById(req: Request<{ id: string }>, res: Response) {
-  const { id } = req.params;
-
-  if (!id) {
-    return res.status(400).json({
-      message: "ID da Receita não informado.",
-    });
-  }
-
-  try {
-    const receita = await Receita.findById(id);
-
-    res.status(200).json(receita);
-  } catch (error) {
-    console.log("Erro ao buscar receita: ", error);
-
-    res.status(404).json({
-      message: "Erro ao buscar receita.",
-    });
-  }
-}
-
-async function create(req: Request, res: Response) {
-  const validationError = validateReceita(req.body);
-
-  if (validationError) {
-    return res.status(400).json({
-      message: validationError,
-    });
-  }
-
-  try {
-    const receita = await Receita.create(req.body);
-
-    res.status(201).json(receita);
-  } catch (error) {
-    console.log("Erro ao criar receita: ", error);
-
-    res.status(500).json({
-      message: "Erro ao criar receita.",
-    });
-  }
-}
-
-async function update(req: Request<{ id: string }>, res: Response) {
-  const { id } = req.params;
-
-  if (!id) {
-    return res.status(400).json({
-      message: "ID da Receita não informado.",
-    });
-  }
-
-  const validationError = validateReceita(req.body);
-
-  if (validationError) {
-    return res.status(400).json({
-      message: validationError,
-    });
-  }
-
-  try {
-    const receita = await Receita.update(id, req.body);
-
-    res.status(200).json(receita);
-  } catch (error) {
-    console.log("Erro ao atualizar receita: ", error);
-
-    res.status(404).json({
-      message: "Receita não encontrada.",
-    });
-  }
-}
-
-async function remove(req: Request<{ id: string }>, res: Response) {
-  const { id } = req.params;
-
-  if (!id) {
-    return res.status(400).json({
-      message: "ID da Receita não informado.",
-    });
-  }
-
-  try {
-    const receita = await Receita.remove(id);
-
-    res.status(200).json({
-      message: "Receita removida com sucesso!",
-    });
-  } catch (error) {
-    console.log("Erro ao remover receita: ", error);
-
-    res.status(404).json({
-      message: "Receita não encontrada.",
-    });
-  }
-}
-
-async function getByKeyword(req: Request<{ keyword: string }>, res: Response) {
-  const { keyword } = req.params;
-
-  if (!keyword || typeof keyword != "string") {
-    return res.status(400).json({
-      message: "Palavra-chave não informada.",
-    });
-  }
-
-  try {
-    const receitas = await Receita.findByKeyword(keyword);
-
-    res.status(200).json(receitas);
-  } catch (error) {
-    console.log("Erro ao pesquisar receitas: ", error);
-
-    res.status(404).json({
-      message: "Erro ao buscar receitas.",
-    });
-  }
-}
-
-export default {
-  getAll,
-  getById,
-  create,
-  update,
-  remove,
-  getByKeyword,
-};

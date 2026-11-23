@@ -1,65 +1,102 @@
 {
   "info": {
-    "_postman_id": "4bf4ec89-95bc-493d-8910-275dcd2c2fb1",
     "name": "Receitas API",
-    "description": "Coleção da API de Receitas Culinárias. Cada pasta pode ser rodada sozinha ou em sequência (Collection Runner). Requisições 'PREPARAÇÃO' criam os dados de apoio e 'LIMPEZA' apagam esses dados no final.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "57537910",
-    "_collection_link": "https://go.postman.co/collection/57537910-4bf4ec89-95bc-493d-8910-275dcd2c2fb1?source=collection_link"
+    "description": "Defina as variáveis categoryId, receitaId, reviewId e favoriteId com os UUIDs retornados pela API."
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "categoryId",
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "key": "receitaId",
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "key": "reviewId",
+      "value": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "key": "favoriteId",
+      "value": "00000000-0000-0000-0000-000000000000"
+    }
+  ],
   "item": [
     {
-      "name": "0 - Root",
+      "name": "Info da API",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": []
+        }
+      }
+    },
+    {
+      "name": "Categorias",
       "item": [
         {
-          "name": "GET /",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Listar",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/",
+              "raw": "{{baseUrl}}/categories",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                ""
+                "categories"
               ]
             }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "1 - Categories",
-      "item": [
+          }
+        },
         {
-          "name": "POST /categories - Criar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"categoryId\", body.id);"
-                ]
-              }
+          "name": "Pesquisar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/search/doce",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categories",
+                "search",
+                "doce"
+              ]
             }
-          ],
+          }
+        },
+        {
+          "name": "Buscar por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Criar",
           "request": {
             "method": "POST",
             "header": [
@@ -68,6 +105,15 @@
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            },
             "body": {
               "mode": "raw",
               "raw": "{\n  \"name\": \"Sobremesas\",\n  \"description\": \"Doces, bolos e tortas\",\n  \"icon\": \"cake\",\n  \"display_order\": 1,\n  \"active\": true\n}",
@@ -76,119 +122,11 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories"
-              ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "GET /categories - Listar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /categories/search/:keyword - Pesquisar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories/search/doces",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories",
-                "search",
-                "doces"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /categories/:id - Buscar por ID",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories/{{categoryId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories",
-                "{{categoryId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "PUT /categories/:id - Atualizar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Atualizar",
           "request": {
             "method": "PUT",
             "header": [
@@ -197,15 +135,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Sobremesas e Doces\",\n  \"description\": \"Doces, bolos, tortas e pudins\",\n  \"icon\": \"cake\",\n  \"display_order\": 2,\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/categories/{{categoryId}}",
               "host": [
@@ -215,23 +144,20 @@
                 "categories",
                 "{{categoryId}}"
               ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "DELETE /categories/:id - Remover",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Doces e Bolos\",\n  \"description\": \"Doces, bolos e tortas\",\n  \"icon\": \"cake\",\n  \"display_order\": 1,\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
             }
-          ],
+          }
+        },
+        {
+          "name": "Remover",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -245,117 +171,15 @@
                 "{{categoryId}}"
               ]
             }
-          },
-          "response": []
+          }
         }
       ]
     },
     {
-      "name": "2 - Receitas",
+      "name": "Receitas",
       "item": [
         {
-          "name": "PREPARAÇÃO - POST /categories (categoria de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"categoryId\", body.id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Sobremesas\",\n  \"description\": \"Doces, bolos e tortas\",\n  \"icon\": \"cake\",\n  \"display_order\": 1,\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST /receitas - Criar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"receitaId\", body.id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"category_id\": \"{{categoryId}}\",\n  \"title\": \"Bolo de cenoura\",\n  \"description\": \"Bolo fofinho com cobertura de chocolate\",\n  \"ingredients\": \"3 cenouras, 4 ovos, 1 xícara de óleo, 2 xícaras de açúcar, 2 xícaras de farinha, 1 colher de fermento\",\n  \"instructions\": \"Bata no liquidificador as cenouras, os ovos e o óleo. Misture com o açúcar e a farinha, adicione o fermento e asse por 40 minutos a 180 °C.\",\n  \"prep_time_minutes\": 60,\n  \"servings\": 10,\n  \"difficulty\": \"easy\",\n  \"image\": \"https://exemplo.com/bolo-de-cenoura.jpg\",\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/receitas",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "receitas"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /receitas - Listar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Listar",
           "request": {
             "method": "GET",
             "header": [],
@@ -368,22 +192,10 @@
                 "receitas"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "GET /receitas/search/:keyword - Pesquisar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Pesquisar",
           "request": {
             "method": "GET",
             "header": [],
@@ -398,22 +210,10 @@
                 "bolo"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "GET /receitas/:id - Buscar por ID",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Buscar por ID",
           "request": {
             "method": "GET",
             "header": [],
@@ -427,131 +227,10 @@
                 "{{receitaId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "PUT /receitas/:id - Atualizar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"category_id\": \"{{categoryId}}\",\n  \"title\": \"Bolo de cenoura com chocolate\",\n  \"description\": \"Bolo fofinho com cobertura de chocolate\",\n  \"ingredients\": \"3 cenouras, 4 ovos, 1 xícara de óleo, 2 xícaras de açúcar, 2 xícaras de farinha, 1 colher de fermento\",\n  \"instructions\": \"Bata no liquidificador as cenouras, os ovos e o óleo. Misture com o açúcar e a farinha, adicione o fermento e asse por 40 minutos a 180 °C.\",\n  \"prep_time_minutes\": 60,\n  \"servings\": 12,\n  \"difficulty\": \"easy\",\n  \"image\": \"https://exemplo.com/bolo-de-cenoura.jpg\",\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/receitas/{{receitaId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "receitas",
-                "{{receitaId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "DELETE /receitas/:id - Remover",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/receitas/{{receitaId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "receitas",
-                "{{receitaId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "LIMPEZA - DELETE /categories/:id (categoria de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories/{{categoryId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories",
-                "{{categoryId}}"
-              ]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
-    {
-      "name": "3 - Reviews",
-      "item": [
-        {
-          "name": "PREPARAÇÃO - POST /categories (categoria de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"categoryId\", body.id);"
-                ]
-              }
-            }
-          ],
+          "name": "Criar",
           "request": {
             "method": "POST",
             "header": [
@@ -560,60 +239,6 @@
                 "value": "application/json"
               }
             ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Sobremesas\",\n  \"description\": \"Doces, bolos e tortas\",\n  \"icon\": \"cake\",\n  \"display_order\": 1,\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "PREPARAÇÃO - POST /receitas (receita de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"receitaId\", body.id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"category_id\": \"{{categoryId}}\",\n  \"title\": \"Bolo de cenoura\",\n  \"description\": \"Bolo fofinho com cobertura de chocolate\",\n  \"ingredients\": \"3 cenouras, 4 ovos, 1 xícara de óleo, 2 xícaras de açúcar, 2 xícaras de farinha, 1 colher de fermento\",\n  \"instructions\": \"Bata no liquidificador as cenouras, os ovos e o óleo. Misture com o açúcar e a farinha, adicione o fermento e asse por 40 minutos a 180 °C.\",\n  \"prep_time_minutes\": 60,\n  \"servings\": 10,\n  \"difficulty\": \"easy\",\n  \"image\": \"https://exemplo.com/bolo-de-cenoura.jpg\",\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/receitas",
               "host": [
@@ -622,68 +247,73 @@
               "path": [
                 "receitas"
               ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST /reviews - Criar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"reviewId\", body.id);"
-                ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category_id\": \"{{categoryId}}\",\n  \"title\": \"Bolo de cenoura\",\n  \"description\": \"Bolo fofinho com cobertura de chocolate\",\n  \"ingredients\": \"3 cenouras, 4 ovos, 1 xícara de óleo, 2 xícaras de açúcar, 2 xícaras de farinha, 1 colher de fermento\",\n  \"instructions\": \"Bata no liquidificador as cenouras, os ovos e o óleo. Misture com o açúcar e a farinha, adicione o fermento e asse por 40 minutos a 180 °C.\",\n  \"prep_time_minutes\": 60,\n  \"servings\": 10,\n  \"difficulty\": \"easy\",\n  \"image\": \"https://exemplo.com/bolo-de-cenoura.jpg\",\n  \"active\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
             }
-          ],
+          }
+        },
+        {
+          "name": "Atualizar",
           "request": {
-            "method": "POST",
+            "method": "PUT",
             "header": [
               {
                 "key": "Content-Type",
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/receitas/{{receitaId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "receitas",
+                "{{receitaId}}"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"receita_id\": \"{{receitaId}}\",\n  \"author_name\": \"Maria Silva\",\n  \"rating\": 5,\n  \"comment\": \"Ficou macio e delicioso!\"\n}",
+              "raw": "{\n  \"category_id\": \"{{categoryId}}\",\n  \"title\": \"Bolo de cenoura\",\n  \"description\": \"Bolo fofinho com cobertura de chocolate\",\n  \"ingredients\": \"3 cenouras, 4 ovos, 1 xícara de óleo, 2 xícaras de açúcar, 2 xícaras de farinha, 1 colher de fermento\",\n  \"instructions\": \"Bata no liquidificador as cenouras, os ovos e o óleo. Misture com o açúcar e a farinha, adicione o fermento e asse por 40 minutos a 180 °C.\",\n  \"prep_time_minutes\": 60,\n  \"servings\": 12,\n  \"difficulty\": \"easy\",\n  \"image\": \"https://exemplo.com/bolo-de-cenoura.jpg\",\n  \"active\": true\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
+            }
+          }
+        },
+        {
+          "name": "Remover",
+          "request": {
+            "method": "DELETE",
+            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reviews",
+              "raw": "{{baseUrl}}/receitas/{{receitaId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "reviews"
+                "receitas",
+                "{{receitaId}}"
               ]
             }
-          },
-          "response": []
-        },
+          }
+        }
+      ]
+    },
+    {
+      "name": "Avaliações",
+      "item": [
         {
-          "name": "GET /reviews - Listar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Listar",
           "request": {
             "method": "GET",
             "header": [],
@@ -696,52 +326,28 @@
                 "reviews"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "GET /reviews/search/:keyword - Pesquisar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Pesquisar",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/reviews/search/delicioso",
+              "raw": "{{baseUrl}}/reviews/search/maria",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "reviews",
                 "search",
-                "delicioso"
+                "maria"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "GET /reviews/receita/:receitaId - Avaliações da receita",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Listar por receita",
           "request": {
             "method": "GET",
             "header": [],
@@ -756,22 +362,10 @@
                 "{{receitaId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "GET /reviews/:id - Buscar por ID",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Buscar por ID",
           "request": {
             "method": "GET",
             "header": [],
@@ -785,22 +379,40 @@
                 "{{reviewId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "PUT /reviews/:id - Atualizar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
+          "name": "Criar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receita_id\": \"{{receitaId}}\",\n  \"author_name\": \"Maria Silva\",\n  \"rating\": 5,\n  \"comment\": \"Ficou macio e delicioso!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
             }
-          ],
+          }
+        },
+        {
+          "name": "Atualizar",
           "request": {
             "method": "PUT",
             "header": [
@@ -809,41 +421,29 @@
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}"
+              ]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"receita_id\": \"{{receitaId}}\",\n  \"author_name\": \"Maria Silva\",\n  \"rating\": 4,\n  \"comment\": \"Muito bom, mas doce demais para mim.\"\n}",
+              "raw": "{\n  \"receita_id\": \"{{receitaId}}\",\n  \"author_name\": \"Maria Silva\",\n  \"rating\": 4,\n  \"comment\": \"Ficou macio e delicioso!\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/reviews/{{reviewId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "reviews",
-                "{{reviewId}}"
-              ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "DELETE /reviews/:id - Remover",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Remover",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -857,220 +457,15 @@
                 "{{reviewId}}"
               ]
             }
-          },
-          "response": []
-        },
-        {
-          "name": "LIMPEZA - DELETE /receitas/:id (receita de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/receitas/{{receitaId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "receitas",
-                "{{receitaId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "LIMPEZA - DELETE /categories/:id (categoria de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories/{{categoryId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories",
-                "{{categoryId}}"
-              ]
-            }
-          },
-          "response": []
+          }
         }
       ]
     },
     {
-      "name": "4 - Favorites",
+      "name": "Favoritos",
       "item": [
         {
-          "name": "PREPARAÇÃO - POST /categories (categoria de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"categoryId\", body.id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Sobremesas\",\n  \"description\": \"Doces, bolos e tortas\",\n  \"icon\": \"cake\",\n  \"display_order\": 1,\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/categories",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "PREPARAÇÃO - POST /receitas (receita de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"receitaId\", body.id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"category_id\": \"{{categoryId}}\",\n  \"title\": \"Bolo de cenoura\",\n  \"description\": \"Bolo fofinho com cobertura de chocolate\",\n  \"ingredients\": \"3 cenouras, 4 ovos, 1 xícara de óleo, 2 xícaras de açúcar, 2 xícaras de farinha, 1 colher de fermento\",\n  \"instructions\": \"Bata no liquidificador as cenouras, os ovos e o óleo. Misture com o açúcar e a farinha, adicione o fermento e asse por 40 minutos a 180 °C.\",\n  \"prep_time_minutes\": 60,\n  \"servings\": 10,\n  \"difficulty\": \"easy\",\n  \"image\": \"https://exemplo.com/bolo-de-cenoura.jpg\",\n  \"active\": true\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/receitas",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "receitas"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST /favorites - Adicionar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 201\", function () { pm.response.to.have.status(201); });",
-                  "const body = pm.response.json();",
-                  "pm.test(\"Retornou id\", function () { pm.expect(body.id).to.be.a(\"string\"); });",
-                  "pm.collectionVariables.set(\"favoriteId\", body.id);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"receita_id\": \"{{receitaId}}\",\n  \"note\": \"Fazer no aniversário da família\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/favorites",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "favorites"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET /favorites - Listar",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Listar",
           "request": {
             "method": "GET",
             "header": [],
@@ -1083,22 +478,10 @@
                 "favorites"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "GET /favorites/:id - Buscar por ID",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Buscar por ID",
           "request": {
             "method": "GET",
             "header": [],
@@ -1112,22 +495,40 @@
                 "{{favoriteId}}"
               ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "PUT /favorites/:id - Atualizar anotação",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
+          "name": "Criar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorites",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"receita_id\": \"{{receitaId}}\",\n  \"note\": \"Fazer no aniversário da família\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
               }
             }
-          ],
+          }
+        },
+        {
+          "name": "Atualizar anotação",
           "request": {
             "method": "PUT",
             "header": [
@@ -1136,6 +537,16 @@
                 "value": "application/json"
               }
             ],
+            "url": {
+              "raw": "{{baseUrl}}/favorites/{{favoriteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "{{favoriteId}}"
+              ]
+            },
             "body": {
               "mode": "raw",
               "raw": "{\n  \"note\": \"Trocar o açúcar por mascavo\"\n}",
@@ -1144,75 +555,11 @@
                   "language": "json"
                 }
               }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/favorites/{{favoriteId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "favorites",
-                "{{favoriteId}}"
-              ]
             }
-          },
-          "response": []
+          }
         },
         {
-          "name": "POST /favorites duplicado -> 409",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 409\", function () { pm.response.to.have.status(409); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"receita_id\": \"{{receitaId}}\",\n  \"note\": \"Fazer no aniversário da família\"\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/favorites",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "favorites"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "DELETE /favorites/:id - Remover",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
+          "name": "Remover",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1226,90 +573,9 @@
                 "{{favoriteId}}"
               ]
             }
-          },
-          "response": []
-        },
-        {
-          "name": "LIMPEZA - DELETE /receitas/:id (receita de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/receitas/{{receitaId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "receitas",
-                "{{receitaId}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "LIMPEZA - DELETE /categories/:id (categoria de apoio)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "pm.test(\"Status 200\", function () { pm.response.to.have.status(200); });"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/categories/{{categoryId}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "categories",
-                "{{categoryId}}"
-              ]
-            }
-          },
-          "response": []
+          }
         }
       ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:3000"
-    },
-    {
-      "key": "categoryId",
-      "value": ""
-    },
-    {
-      "key": "receitaId",
-      "value": ""
-    },
-    {
-      "key": "reviewId",
-      "value": ""
-    },
-    {
-      "key": "favoriteId",
-      "value": ""
     }
   ]
 }

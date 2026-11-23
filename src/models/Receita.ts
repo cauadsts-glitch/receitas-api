@@ -1,116 +1,120 @@
-import supabase from "../config/supabase.js";
+import {
+  asObject,
+  optionalBoolean,
+  optionalPositiveInt,
+  optionalString,
+  requiredString,
+  requiredUuid,
+} from "../utils/validation.js";
+import { ValidationError } from "../errors/AppError.js";
 
-async function findAll() {
-  const { data, error } = await supabase.from("receitas").select("*");
+export const DIFFICULTIES = ["easy", "medium", "hard"] as const;
 
-  if (error) {
-    throw error;
-  }
+export type Difficulty = (typeof DIFFICULTIES)[number];
 
-  return data;
-}
-
-async function findById(id: string) {
-  const { data, error } = await supabase
-    .from("receitas")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
-}
-
-async function create(receita: {
+/** Registro como está salvo na tabela `receitas`. */
+export interface ReceitaRecord {
+  id: string;
   category_id: string;
   title: string;
-  description: string;
+  description: string | null;
   ingredients: string;
   instructions: string;
-  prep_time_minutes: number;
-  servings: number;
-  difficulty: string;
-  image: string;
+  prep_time_minutes: number | null;
+  servings: number | null;
+  difficulty: Difficulty | null;
+  image: string | null;
   active: boolean;
-}) {
-  const { data, error } = await supabase
-    .from("receitas")
-    .insert(receita)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+  created_at: string;
 }
 
-async function update(
-  id: string,
-  receita: {
-    category_id: string;
-    title: string;
-    description: string;
-    ingredients: string;
-    instructions: string;
-    prep_time_minutes: number;
-    servings: number;
-    difficulty: string;
-    image: string;
-    active: boolean;
-  },
-) {
-  const { data, error } = await supabase
-    .from("receitas")
-    .update(receita)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+/** Dados graváveis de uma receita. */
+export interface ReceitaData {
+  category_id: string;
+  title: string;
+  description: string | null;
+  ingredients: string;
+  instructions: string;
+  prep_time_minutes: number | null;
+  servings: number | null;
+  difficulty: Difficulty | null;
+  image: string | null;
+  active: boolean;
 }
 
-async function remove(id: string) {
-  const { data, error } = await supabase
-    .from("receitas")
-    .delete()
-    .eq("id", id)
-    .select()
-    .single();
+export class Receita {
+  private readonly data: ReceitaData;
 
-  if (error) {
-    throw error;
+  private constructor(data: ReceitaData) {
+    this.data = data;
   }
 
-  return data;
-}
+  static fromInput(body: unknown): Receita {
+    const input = asObject(body);
 
-async function findByKeyword(keyword: string) {
-  const { data, error } = await supabase
-    .from("receitas")
-    .select("*")
-    .or(`title.ilike.%${keyword}%, description.ilike.%${keyword}%`);
-
-  if (error) {
-    throw error;
+    return new Receita({
+      category_id: requiredUuid(input, "category_id", "O ID da categoria"),
+      title: requiredString(input, "title", "O título da receita"),
+      description: optionalString(input, "description", "A descrição"),
+      ingredients: requiredString(
+        input,
+        "ingredients",
+        "O campo ingredientes",
+        5000,
+      ),
+      instructions: requiredString(
+        input,
+        "instructions",
+        "O modo de preparo",
+        10000,
+      ),
+      prep_time_minutes: optionalPositiveInt(
+        input,
+        "prep_time_minutes",
+        "O tempo de preparo",
+      ),
+      servings: optionalPositiveInt(input, "servings", "O número de porções"),
+      difficulty: Receita.parseDifficulty(input["difficulty"]),
+      image: optionalString(input, "image", "A imagem", 500),
+      active: optionalBoolean(input, "active", "O campo active", true),
+    });
   }
 
-  return data;
-}
+  private static parseDifficulty(value: unknown): Difficulty | null {
+    if (value === undefined || value === null) {
+      return null;
+    }
 
-export default {
-  findAll,
-  findById,
-  create,
-  update,
-  remove,
-  findByKeyword,
-};
+    if (
+      typeof value !== "string" ||
+      !(DIFFICULTIES as readonly string[]).includes(value)
+    ) {
+      throw new ValidationError(
+        `A dificuldade deve ser uma destas opções: ${DIFFICULTIES.join(", ")}.`,
+      );
+    }
+
+    return value as Difficulty;
+  }
+
+  /** Uma receita só pode receber avaliações e ser favoritada se estiver ativa. */
+  static isAvailable(record: Pick<ReceitaRecord, "active">): boolean {
+    return record.active;
+  }
+
+  get categoryId(): string {
+    return this.data.category_id;
+  }
+
+  get title(): string {
+    return this.data.title;
+  }
+
+  get active(): boolean {
+    return this.data.active;
+  }
+
+  toPersistence(): ReceitaData {
+    return { ...this.data };
+  }
+}

@@ -1,13 +1,15 @@
 import { Router } from "express";
-import ReceitaController from "../controllers/ReceitaController.js";
+import type { ReceitaController } from "../controllers/ReceitaController.js";
 
-const router = Router();
+export function receitaRouter(controller: ReceitaController): Router {
+  const router = Router();
 
-router.get("/", ReceitaController.getAll);
-router.get("/search/:keyword", ReceitaController.getByKeyword);
-router.get("/:id", ReceitaController.getById);
-router.post("/", ReceitaController.create);
-router.put("/:id", ReceitaController.update);
-router.delete("/:id", ReceitaController.remove);
+  router.get("/", controller.getAll);
+  router.get("/search/:keyword", controller.getByKeyword);
+  router.get("/:id", controller.getById);
+  router.post("/", controller.create);
+  router.put("/:id", controller.update);
+  router.delete("/:id", controller.remove);
 
-export default router;
+  return router;
+}

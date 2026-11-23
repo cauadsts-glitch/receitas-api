@@ -1,12 +1,14 @@
 import { Router } from "express";
-import FavoriteController from "../controllers/FavoriteController.js";
+import type { FavoriteController } from "../controllers/FavoriteController.js";
 
-const router = Router();
+export function favoriteRouter(controller: FavoriteController): Router {
+  const router = Router();
 
-router.get("/", FavoriteController.getAll);
-router.get("/:id", FavoriteController.getById);
-router.post("/", FavoriteController.create);
-router.put("/:id", FavoriteController.update);
-router.delete("/:id", FavoriteController.remove);
+  router.get("/", controller.getAll);
+  router.get("/:id", controller.getById);
+  router.post("/", controller.create);
+  router.put("/:id", controller.update);
+  router.delete("/:id", controller.remove);
 
-export default router;
+  return router;
+}
